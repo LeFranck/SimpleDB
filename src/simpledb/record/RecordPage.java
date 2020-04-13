@@ -9,8 +9,7 @@ import simpledb.tx.Transaction;
  * @author Edward Sciore
  */
 public class RecordPage {
-   public static final int EMPTY = 0, INUSE = 1, INTNULL = (2^31)-1;
-   public static final String STRNULL = "NULL";
+   public static final int EMPTY = 0, INUSE = 1;
    
    private Block blk;
    private TableInfo ti;
