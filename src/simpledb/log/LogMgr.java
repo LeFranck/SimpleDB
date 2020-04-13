@@ -60,7 +60,10 @@ public class LogMgr implements Iterable<BasicLogRecord> {
     */
    public void flush(int lsn) {
       if (lsn >= currentLSN())
+      {
          flush();
+         System.out.println("--Done Flush-Log--");
+      }
    }
 
    /**
@@ -127,9 +130,10 @@ public class LogMgr implements Iterable<BasicLogRecord> {
     * Returns the LSN of the most recent log record.
     * As implemented, the LSN is the block number where the record is stored.
     * Thus every log record in a block has the same LSN.
+    * Cambiado a publico para acceder al momento de hacer commit
     * @return the LSN of the most recent log record
     */
-   private int currentLSN() {
+   public int currentLSN() {
       return currentblk.number();
    }
 

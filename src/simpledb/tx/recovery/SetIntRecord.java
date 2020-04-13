@@ -6,7 +6,7 @@ import simpledb.file.Block;
 import simpledb.log.BasicLogRecord;
 
 class SetIntRecord implements LogRecord {
-   private int txnum, offset, val;
+   private int txnum, offset, val, newval;
    private Block blk;
 
    /**
@@ -16,16 +16,18 @@ class SetIntRecord implements LogRecord {
     * @param offset the offset of the value in the block
     * @param val the new value
     */
-   public SetIntRecord(int txnum, Block blk, int offset, int val) {
+   public SetIntRecord(int txnum, Block blk, int offset, int val, int newval) {
       this.txnum = txnum;
       this.blk = blk;
       this.offset = offset;
       this.val = val;
+      this.newval = newval;
    }
 
    /**
     * Creates a log record by reading five other values from the log.
     * @param rec the basic log record
+    * ---------------------------------------------------------------------¿newval?
     */
    public SetIntRecord(BasicLogRecord rec) {
       txnum = rec.nextInt();
@@ -34,6 +36,7 @@ class SetIntRecord implements LogRecord {
       blk = new Block(filename, blknum);
       offset = rec.nextInt();
       val = rec.nextInt();
+      newval = rec.nextInt();
    }
 
    /**
@@ -46,7 +49,8 @@ class SetIntRecord implements LogRecord {
     */
    public int writeToLog() {
       Object[] rec = new Object[] {SETINT, txnum, blk.fileName(),
-         blk.number(), offset, val};
+         blk.number(), offset, val, newval};
+      System.out.println(toString());
       return logMgr.append(rec);
    }
 
@@ -59,7 +63,7 @@ class SetIntRecord implements LogRecord {
    }
 
    public String toString() {
-      return "<SETINT " + txnum + " " + blk + " " + offset + " " + val + ">";
+      return "<SETINT " + txnum + " " + blk + " " + offset + " : " + val +" , "+ newval+ " >";
    }
 
    /**
@@ -75,4 +79,13 @@ class SetIntRecord implements LogRecord {
       buff.setInt(offset, val, txnum, -1);
       buffMgr.unpin(buff);
    }
+
+   public void redo(int txnum)
+   {
+	      BufferMgr buffMgr = SimpleDB.bufferMgr();
+	      Buffer buff = buffMgr.pin(blk);
+	      buff.setInt(offset, newval, txnum, -1); //-2?
+	      buffMgr.unpin(buff);	   
+   }
+
 }

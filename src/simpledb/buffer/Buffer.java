@@ -117,6 +117,8 @@ public class Buffer {
     * The method ensures that the corresponding log
     * record has been written to disk prior to writing
     * the page to disk.
+    * 
+    * Como ahora sera undo-redo
     */
    void flush() {
       if (modifiedBy >= 0) {

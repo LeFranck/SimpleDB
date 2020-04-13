@@ -33,6 +33,7 @@ class RollbackRecord implements LogRecord {
     */
    public int writeToLog() {
       Object[] rec = new Object[] {ROLLBACK, txnum};
+      System.out.println(toString());
       return logMgr.append(rec);
    }
    
@@ -49,6 +50,8 @@ class RollbackRecord implements LogRecord {
     * contains no undo information.
     */
    public void undo(int txnum) {}
+   
+   public void redo(int txnum){}
    
    public String toString() {
       return "<ROLLBACK " + txnum + ">";

@@ -28,6 +28,7 @@ class CheckpointRecord implements LogRecord {
     */
    public int writeToLog() {
       Object[] rec = new Object[] {CHECKPOINT};
+      System.out.println(toString());
       return logMgr.append(rec);
    }
    
@@ -48,8 +49,11 @@ class CheckpointRecord implements LogRecord {
     * contains no undo information.
     */
    public void undo(int txnum) {}
+
+   public void redo(int txnum){}
    
    public String toString() {
       return "<CHECKPOINT>";
    }
+
 }

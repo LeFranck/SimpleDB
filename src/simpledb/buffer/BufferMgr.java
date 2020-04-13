@@ -107,7 +107,9 @@ public class BufferMgr {
     * @param txnum the transaction's id number
     */
    public void flushAll(int txnum) {
+	  System.out.println("--Flush-Tx-"+txnum+"--");
       bufferMgr.flushAll(txnum);
+	  System.out.println("--Done-Flush-Tx-"+txnum+"--");
    }
    
    /**
