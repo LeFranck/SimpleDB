@@ -1,6 +1,10 @@
 package simpledb.query;
 
 import static java.sql.Types.INTEGER;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import simpledb.tx.Transaction;
 import simpledb.record.*;
 
@@ -77,6 +81,7 @@ public class TableScan implements UpdateScan {
     * @see simpledb.query.UpdateScan#setVal(java.lang.String, simpledb.query.Constant)
     */ 
    public void setVal(String fldname, Constant val) {
+   	 	debug_file(fldname, val);
       if (sch.type(fldname) == INTEGER)
          rf.setInt(fldname, (Integer)val.asJavaVal());
       else
@@ -106,4 +111,24 @@ public class TableScan implements UpdateScan {
    public void moveToRid(RID rid) {
       rf.moveToRid(rid);
    }
+   
+   public boolean PageHasSpaceForRecord()
+   {
+	   return rf.PageHasSpaceForRecord();
+   }
+   
+	private void debug_file(String aux, Constant val)
+	{
+		try{
+			PrintWriter writer = new PrintWriter("DEBUGGER.txt", "UTF-8");
+			writer.println(aux);
+			int xq = sch.type(aux);
+			writer.println(xq);
+			writer.println("The rtherg line");
+			writer.close();
+		} catch (IOException e) {
+		// do something
+		}
+	}
+   
 }

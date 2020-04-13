@@ -1,5 +1,9 @@
 package simpledb.planner;
 
+import static java.sql.Types.INTEGER;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
@@ -40,6 +44,7 @@ public class BasicUpdatePlanner implements UpdatePlanner {
    }
    
    public int executeInsert(InsertData data, Transaction tx) {
+	   
       Plan p = new TablePlan(data.tableName(), tx);
       UpdateScan us = (UpdateScan) p.open();
       us.insert();
@@ -65,4 +70,18 @@ public class BasicUpdatePlanner implements UpdatePlanner {
       SimpleDB.mdMgr().createIndex(data.indexName(), data.tableName(), data.fieldName(), tx);
       return 0;  
    }
+   
+	private void debug_file(String aux, Constant val)
+	{
+
+		try{
+			System.out.println("JOLA");
+			PrintWriter writer = new PrintWriter("DEBUGGER.txt", "UTF-8");
+			writer.println(aux);
+			writer.println("The rtherg line");
+			writer.close();
+		} catch (IOException e) {
+		// do something
+		}
+	}
 }

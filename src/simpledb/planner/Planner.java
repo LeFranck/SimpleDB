@@ -1,6 +1,10 @@
 package simpledb.planner;
 
 import simpledb.tx.Transaction;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import simpledb.parse.*;
 import simpledb.query.*;
 
@@ -39,11 +43,16 @@ public class Planner {
     * @param tx the transaction
     * @return an integer denoting the number of affected records
     */
+   
+   //CLAVEEEEEE
    public int executeUpdate(String cmd, Transaction tx) {
+       //debug_file();
+
       Parser parser = new Parser(cmd);
       Object obj = parser.updateCmd();
-      if (obj instanceof InsertData)
+      if (obj instanceof InsertData){
          return uplanner.executeInsert((InsertData)obj, tx);
+      }
       else if (obj instanceof DeleteData)
          return uplanner.executeDelete((DeleteData)obj, tx);
       else if (obj instanceof ModifyData)
@@ -57,4 +66,6 @@ public class Planner {
       else
          return 0;
    }
+   
+   
 }

@@ -1,5 +1,7 @@
 package simpledb.index.planner;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -21,7 +23,9 @@ import simpledb.query.*;
 public class IndexUpdatePlanner implements UpdatePlanner {
    
    public int executeInsert(InsertData data, Transaction tx) {
-      String tblname = data.tableName();
+
+	   
+	   String tblname = data.tableName();
       Plan p = new TablePlan(tblname, tx);
       
       // first, insert the record
