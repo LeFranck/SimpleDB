@@ -3,6 +3,7 @@ import java.sql.*;
 import simpledb.remote.SimpleDriver;
 
 public class CreateStudentDB {
+	
     public static void main(String[] args) {
 		Connection conn = null;
 		try {

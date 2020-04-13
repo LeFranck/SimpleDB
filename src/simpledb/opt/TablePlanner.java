@@ -92,7 +92,8 @@ class TablePlanner {
       return null;
    }
    
-   private Plan makeIndexJoin(Plan current, Schema currsch) {
+   //Se cambio la visibilidad para no copiar y pegar codigo
+   public Plan makeIndexJoin(Plan current, Schema currsch) {
       for (String fldname : indexes.keySet()) {
          String outerfield = mypred.equatesWithField(fldname);
          if (outerfield != null && currsch.hasField(outerfield)) {
@@ -125,4 +126,16 @@ class TablePlanner {
       else
          return p;
    }
+
+	public Schema get__Myschema() {
+		return myschema;
+	}
+
+	public Predicate getMypred() {
+		return mypred;
+	}
+   
+   
+   
+   
 }
