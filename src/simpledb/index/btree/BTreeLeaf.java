@@ -89,7 +89,7 @@ public class BTreeLeaf {
     * @param datarid the dataRID value of the new record
     * @return the directory entry of the newly-split page, if one exists.
     */
-   public DirEntry insert(RID datarid) {
+   public DirEntry insert(RID datarid, boolean canTransfer) {
    	// bug fix:  If the page has an overflow page 
    	// and the searchkey of the new record would be lowest in its page, 
    	// we need to first move the entire contents of that page to a new block
@@ -107,7 +107,13 @@ public class BTreeLeaf {
       contents.insertLeaf(currentslot, searchkey, datarid);
       if (!contents.isFull())
          return null;
-      // else page is full, so split it
+      
+      if(canTransfer)
+      {
+    	  return new DirEntry(searchkey,-100000);
+      }
+    	  
+      // else page is full, and can't be transfered,so split it
       Constant firstkey = contents.getDataVal(0);
       Constant lastkey  = contents.getDataVal(contents.getNumRecs()-1);
       if (lastkey.equals(firstkey)) {
@@ -146,4 +152,69 @@ public class BTreeLeaf {
       currentslot = 0;
       return true;
    }
+
+//   public Constant transferFirstRec(BTreeLeaf dest) {
+//	   //set dest searchkey 
+//	   //dest.insert(this.firstrecord)
+//	   return contents.transferFirstRec(dest.getContents());
+//   }
+   
+//   public Constant transferLastRec(BTreeLeaf dest) {
+//	   //PASAR RID
+//	   RID wut = contents.getDataRid(contents.getNumRecs()-1);
+//	   return contents.transferLastRec(dest, wut);
+//   }
+   
+   
+   
+   public BTreePage getContents() {
+	return contents;
+}
+
+   public boolean haveSpace() {
+	   return contents.haveSpaceForTransfer();
+   }
+
+
+
+	public Constant getFirstDataval() {
+		return contents.getDataVal(0);
+	}
+	
+	public RID getFirstRid() {
+		return contents.getDataRid(0);
+	}
+
+
+	public void setSearchkey(Constant dataval) {
+		searchkey = dataval;
+	}
+
+	public void deleteFirst() {
+		RID datarid = getFirstRid();
+		currentslot = -1;
+		delete(datarid);
+	}
+
+	public Constant getSecondDataval() {
+		return contents.getDataVal(1);
+	}
+
+	public Constant getLastDataval() {
+		return contents.getDataVal(contents.getNumRecs()-1);
+	}
+
+	public RID getLastRid() {
+		return contents.getDataRid(contents.getNumRecs()-1);
+	}
+
+	public void deleteLast() {
+		RID datarid = getLastRid();
+		currentslot = -1;
+		delete(datarid);
+	}
+
+
+
+
 }

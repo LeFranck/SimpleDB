@@ -43,8 +43,16 @@ public class BTreePage {
     */
    public int findSlotBefore(Constant searchkey) {
       int slot = 0;
+      Constant aux = null;
       while (slot < getNumRecs() && getDataVal(slot).compareTo(searchkey) < 0)
+      {
+         if(slot < getNumRecs())
+         {
+             aux = getDataVal(slot);
+         }
          slot++;
+      }
+      aux = getDataVal(slot);
       return slot-1;
    }
    
@@ -64,6 +72,12 @@ public class BTreePage {
    public boolean isFull() {
       return slotpos(getNumRecs()+1) >= BLOCK_SIZE;
    }
+   
+   public boolean haveSpaceForTransfer() {
+	   	  int aux = slotpos(getNumRecs()+3); 
+	      return slotpos(getNumRecs()+3) < BLOCK_SIZE;
+   }
+   
    
    /**
     * Splits the page at the specified position.
@@ -214,7 +228,7 @@ public class BTreePage {
       tx.setString(currentblk, pos, val);
    }
    
-   private void setVal(int slot, String fldname, Constant val) {
+   public void setVal(int slot, String fldname, Constant val) {
       int type = ti.schema().type(fldname);
       if (type == INTEGER)
          setInt(slot, fldname, (Integer)val.asJavaVal());
@@ -250,6 +264,35 @@ public class BTreePage {
       }
    }
    
+   //-1?
+   public void transferFirstRec(BTreePage dest) {
+	      int destslot = dest.getNumRecs();
+	      dest.insert(destslot);
+	      Schema sch = ti.schema();
+	      //SE PUDRE TODO
+	      //int blk = getInt(0, "block");
+	      //int od = getInt(0, "id");
+	      for (String fldname : sch.fields())
+	    	  dest.setVal(destslot, fldname, getVal(0, fldname));
+	      delete(0);
+	      
+	      //Constant newkey = getVal(0, "dataval");
+	      dest.close();
+	      //return newkey;
+	   }
+   
+   public void transferLastRec(BTreeLeaf dest, RID rid) {
+	      int destslot = 0;
+	      dest.insert(rid, false);
+	      //	      	Schema sch = ti.schema();
+	      //	      for (String fldname : sch.fields())
+	      //	    	  dest.setVal(destslot, fldname, getVal(getNumRecs()-1, fldname));
+	      //	      Constant newkey = getVal(getNumRecs()-1, "dataval");
+	      delete(getNumRecs()-1);
+	      dest.close();
+	      //return newkey;
+	   }
+   
    private int fldpos(int slot, String fldname) {
       int offset = ti.offset(fldname);
       return slotpos(slot) + offset;
@@ -258,4 +301,19 @@ public class BTreePage {
    private int slotpos(int slot) {
       return INT_SIZE + INT_SIZE + (slot * slotsize);
    }
+   
+   public int getSlotsize()
+   {
+	   return slotsize;
+   }
+
+
+   public Constant findOldKey(Constant searchkey) {
+	      int slot = 0;
+	      while (slot < getNumRecs() && getDataVal(slot).compareTo(searchkey) <= 0)
+	         slot++;
+	      
+	      return getDataVal(slot-1);
+   }
+   
 }

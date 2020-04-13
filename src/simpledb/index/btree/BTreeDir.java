@@ -2,6 +2,7 @@ package simpledb.index.btree;
 
 import simpledb.file.Block;
 import simpledb.tx.Transaction;
+import simpledb.record.RID;
 import simpledb.record.TableInfo;
 import simpledb.query.Constant;
 
@@ -107,11 +108,99 @@ public class BTreeDir {
       return new DirEntry(splitval, newblk.number());
    }
 
-   private Block findChildBlock(Constant searchkey) {
+   //Sera cambiado a publico para la facilidad de conseguir la asendencia de una key
+   public Block findChildBlock(Constant searchkey) {
+	   //como tiene los records en orden(por eso se pone -2^31 si es int) los recorre hasta que se pasa
+	   //y devuelve el record previo
       int slot = contents.findSlotBefore(searchkey);
       if (contents.getDataVal(slot+1).equals(searchkey))
          slot++;
       int blknum = contents.getChildNum(slot);
       return new Block(filename, blknum);
    }
+   
+   public Block searchBigBrother(Constant searchkey) {
+      int slot = contents.findSlotBefore(searchkey);
+      if (contents.getDataVal(slot).equals(searchkey))
+         slot++;
+      slot++;
+      if(slot<contents.getNumRecs())
+      {
+    	  int blknum = contents.getChildNum(slot);
+    	  return new Block(filename, blknum);
+      }else{
+    	  return null;
+      }
+   }
+   
+   public Block searchLittleBrother(Constant searchkey) {
+	      int slot = contents.findSlotBefore(searchkey);
+	      if (!contents.getDataVal(slot).equals(searchkey))
+	         slot--;
+	      if(slot>=0)
+	      {
+	    	  int blknum = contents.getChildNum(slot);
+	    	  return new Block(filename, blknum);
+	      }else{
+	    	  return null;
+	      }
+	   }
+
+   public Block searchGrandad(Constant searchkey, Block root) {
+	   Block Grandadblk = null;
+	   Block dadblk = root;
+	   Block childblk = findChildBlock(searchkey);
+	   while (contents.getFlag() > 0) {
+		   Grandadblk = dadblk;
+		   dadblk = childblk;
+		   contents.close();
+		   contents = new BTreePage(childblk, ti, tx);
+		   childblk = findChildBlock(searchkey);
+	   }
+	   return Grandadblk;
+	}
+   
+   public void redistribution(BTreeLeaf inicio , BTreeLeaf dest, Constant searchkey, int brother){
+	   //int slot = contents.findSlotBefore(searchkey);
+	   //para estar justo en la posicion que apunta a inicio
+	   if(brother == -1){
+		   //int id = inicio.getFirstId();
+		   //int blk = inicio.getFirstBlk();
+
+		   //deberia ser 116
+		   Constant oldkey = contents.findOldKey(searchkey);
+		   Constant newkey = inicio.getSecondDataval();
+		   Constant dataval = inicio.getFirstDataval();
+		   RID rid = inicio.getFirstRid();
+		   dest.setSearchkey(dataval);
+		   dest.insert(rid, true);
+		   inicio.setSearchkey(oldkey);
+		   inicio.deleteFirst();
+		   changeKey(oldkey, newkey);
+		   
+		   //Constant newkey = inicio.transferFirstRec(dest);
+		   //if (!contents.getDataVal(slot).equals(searchkey))
+			//   slot--;
+		   //contents.setVal(slot, "datavl", newkey);
+	   }else{
+		   Constant oldkey = contents.findOldKey(searchkey);
+		   Constant newkey = inicio.getLastDataval();
+		   RID rid = inicio.getLastRid();
+		   dest.setSearchkey(newkey);
+		   changeKey(oldkey, newkey);
+		   dest.insert(rid, true);
+		   dest.setSearchkey(newkey);
+		   inicio.deleteLast();
+	   }
+   }
+   
+   
+   private void changeKey(Constant oldkey, Constant newkey)
+   {
+	   int slot = contents.findSlotBefore(oldkey);
+	   slot++;
+	   contents.setVal(slot, "dataval", newkey);
+   }
+   
+   
 }
