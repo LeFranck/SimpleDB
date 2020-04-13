@@ -140,6 +140,8 @@ public class Page {
    public synchronized String getString(int offset) {
       contents.position(offset);
       int len = contents.getInt();
+      //Cambio desesperado para evitar bug
+      len = 0;
       byte[] byteval = new byte[len];
       contents.get(byteval);
       return new String(byteval);

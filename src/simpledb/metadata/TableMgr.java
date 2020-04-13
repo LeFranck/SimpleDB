@@ -73,6 +73,8 @@ public class TableMgr {
          fcatfile.setInt   ("type",   sch.type(fldname));
          fcatfile.setInt   ("length", sch.length(fldname));
          fcatfile.setInt   ("offset", ti.offset(fldname));
+         System.out.println("espacio libre: "+ fcatfile.getRp().getFreeSpace());
+
       }
       fcatfile.close();
    }

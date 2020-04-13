@@ -161,4 +161,11 @@ public class RecordFile {
       RecordFormatter fmtr = new RecordFormatter(ti);
       tx.append(filename, fmtr);
    }
+
+   //Para probrar getFreeSpace
+	public RecordPage getRp() {
+		return rp;
+	}
+	   
+   
 }

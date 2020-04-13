@@ -29,7 +29,8 @@ public class TableInfo {
       int pos = 0;
       for (String fldname : schema.fields()) {
          offsets.put(fldname, pos);
-         pos += lengthInBytes(fldname);
+         pos += 1;
+         //pos += lengthInBytes(fldname);
       }
       recordlen = pos;
    }
