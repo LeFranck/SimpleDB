@@ -161,4 +161,13 @@ public class RecordFile {
       RecordFormatter fmtr = new RecordFormatter(ti);
       tx.append(filename, fmtr);
    }
+
+   
+   public boolean PageHasSpaceForRecord()
+   {
+	   beforeFirst();
+	   return rp.searchFor(0);
+   }
+   
+   
 }

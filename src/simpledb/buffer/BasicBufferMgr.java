@@ -4,7 +4,7 @@ import simpledb.file.*;
 
 /**
  * Manages the pinning and unpinning of buffers to blocks.
- * @author Edward Sciore2
+ * @author Edward Sciore
  *
  */
 class BasicBufferMgr {

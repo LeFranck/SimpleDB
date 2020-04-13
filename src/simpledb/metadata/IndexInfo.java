@@ -50,6 +50,8 @@ public class IndexInfo {
       return new HashIndex(idxname, sch, tx);
    }
    
+
+   
    /**
     * Estimates the number of block accesses required to
     * find all index records having a particular search key.

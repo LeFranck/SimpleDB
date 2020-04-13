@@ -106,4 +106,10 @@ public class TableScan implements UpdateScan {
    public void moveToRid(RID rid) {
       rf.moveToRid(rid);
    }
+   
+   public boolean PageHasSpaceForRecord()
+   {
+	   return rf.PageHasSpaceForRecord();
+   }
+   
 }
